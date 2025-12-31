@@ -1,34 +1,48 @@
 import board
-
-# These are imports from the kmk library
 from kmk.kmk_keyboard import KMKKeyboard
 from kmk.scanners.keypad import KeysScanner
 from kmk.keys import KC
-from kmk.modules.macros import Press, Release, Tap, Macros
+from kmk.modules.encoder import EncoderHandler
 
-# This is the main instance of your keyboard
 keyboard = KMKKeyboard()
 
-# Add the macro extension
-macros = Macros()
-keyboard.modules.append(macros)
+# Encoder-Module
+encoder_handler = EncoderHandler()
+keyboard.modules.append(encoder_handler)
 
-# Define your pins here!
-PINS = [board.D3, board.D4, board.D2, board.D1]
+#Pins (SW1 - SW4)
+# SW1(GP1), SW2(GP2), SW3(GP4), SW4(GP3)
+PINS = [board.GP1, board.GP2, board.GP4, board.GP3]
 
-# Tell kmk we are not using a key matrix
 keyboard.matrix = KeysScanner(
     pins=PINS,
     value_when_pressed=False,
 )
 
-# Here you define the buttons corresponding to the pins
-# Look here for keycodes: https://github.com/KMKfw/kmk_firmware/blob/main/docs/en/keycodes.md
-# And here for macros: https://github.com/KMKfw/kmk_firmware/blob/main/docs/en/macros.md
-keyboard.keymap = [
-    [KC.A, KC.DELETE, KC.MACRO("I just want to test ts"), KC.Macro(Press(KC.LCMD), Tap(KC.S), Release(KC.LCMD)),]
-] #idk how to code fr fr pls help
+#Rotary Encoder (SW5) 
+# Pin A -> GP26, Pin B -> GP27. (S1/S2) -> GP28.
+encoder_handler.pins = (
+    (board.GP26, board.GP29, board.GP27, board.GP28, False), 
+)
 
-# Start kmk!
+#Keymap
+# SW1: Next Track | SW2: Prev Track | SW3: Stop | SW4: Play/Pause
+# Encoder (SW5) Mute 
+keyboard.keymap = [
+    [
+        KC.MEDIA_NEXT_TRACK, # SW1
+        KC.MEDIA_PREV_TRACK, # SW2
+        KC.MEDIA_STOP,       # SW3
+        KC.MEDIA_PLAY_PAUSE, # SW4
+        KC.MUTE,             # Encoder Klick (SW5)
+    ]
+]
+
+# 4. Encoder Turning
+# [left (volume down), right (volume up)]
+encoder_handler.map = [
+    ((KC.VOLD, KC.VOLU),)
+]
+
 if __name__ == '__main__':
     keyboard.go()
