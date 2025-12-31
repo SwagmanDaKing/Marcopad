@@ -42,6 +42,8 @@ BOM:
 4x M3 Heatset
 
 1x EC11 Rotary Encoder Switch Vertical_H20mm
+
+
 Others:
 
 KMK Firmware
